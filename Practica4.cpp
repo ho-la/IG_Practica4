@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
@@ -16,18 +16,12 @@ void destroyFunc();
 void funIdle();
 void keyboard(unsigned char key,int x,int y);
 
-void glDrawSphere(char color,float radio,bool luz);
-void drawCone();
-void P3Tarea1();
-void P3Tarea2();
-void P3Tarea3();
-
+void practica4();
+void drawPieza(int size);
 // Variables globales
 int w = 900;
 int h = 500;
-GLfloat rotX = 0.0f;
-GLfloat rotY = 0.0f;
-GLfloat lunax = 5.5, lunay=0,lunaz = 0.0;
+
 //GLfloat PL0[] = { 1.0f, 1.0f, 1.0f, 0.0f };
 GLfloat PL0[] = { 0.0f, 0.0f, -10.0f, 1.0f };//ultimo parametro 0=direccionar,1=posicional
 GLfloat PL1[] = {3.0f, 2.0f, -6.0f, 1.0f };//Posicion de la luz de la vela
@@ -40,19 +34,6 @@ GLfloat PLL[] = { 0.0, 0.0, 0.0, 1.0 };
 
 GLuint textureName[NT];
 //Mis variables globales
-//Si gira de 6h en 6h
-GLfloat anio = (360.0/365.0)/4; //365*24 horas
-GLfloat dia = (360.0/4.0); //24 horas
-GLfloat mes= anio*12;  // Luna gira 12 veces sobre a Tierra en un año
-
-int Anio = 0; 
-int Dia = 0; 
-int Mes= 0;  
-
-GLfloat RAnio = 0.0f;
-GLfloat RDia = 0.0f;
-GLfloat RMes=0.0f;
-
 GLfloat KaS[] = { 0.1, 0.1, 0.1, 1.0 };
 GLfloat KdS[] = { 0.9, 0.9, 0.2, 1.0 };
 GLfloat KsS[] = { 0.9, 0.9, 0.1, 1.0 };//Brillo amarillo
@@ -63,14 +44,20 @@ GLfloat KaT[] = { 0.1, 0.1, 0.1, 1.0 };
 GLfloat KdT[] = { 0.2, 0.2, 0.7, 1.0 };
 GLfloat KsT[] = { 0.9, 0.9, 0.0, 1.0 }; //Brillo Azul
 
-GLfloat zoom = -10.0f;
-GLfloat giroVertical=0.0f;
-int iniX;
-bool luna_on = false;
-
+GLfloat zoom = 5.0f;
+GLboolean dibujar[]={false,false,false,false};
+GLfloat x1=0.0f,x2=0.0f,x3=0.0f,x4=0.0f;
+GLfloat ty1=0.0f,ty2=0.0f,ty3=0.0f,ty4=0.0f,z1=0.0f,z2=0.0f,z3=0.0f,z4=0.0f;
+GLfloat pos1[]={x1,ty1,z1};
+GLfloat pos2[]={x2,ty2,z2};
+GLfloat pos3[]={x3,ty3,z3};
+GLfloat pos4[]={x4,ty4,z4};
+GLfloat rx1=0.0f,rx2=0.0f,rx3=0.0f,rx4=0.0f,ry1=0.0f,ry2=0.0f,ry3=0.0f,ry4=0.0f,rz1=0.0f,rz2=0.0f,rz3=0.0f,rz4=0.0f;
+GLfloat rot1[]={rx1,ry1,rz1};
+GLfloat rot2[]={rx2,ry2,rz2};
+GLfloat rot3[]={rx3,ry3,rz3};
+GLfloat rot4[]={rx4,ry4,rz4};
 GLboolean anima=true;
-GLboolean esTarea1;
-int tarea=1;
 int main(int argc, char** argv) {
     
  // Inicializamos GLUT
@@ -138,13 +125,7 @@ void initFunc() {
     //GLfloat Id1[] = { 0.8f, 0.8f, 0.8f, 1.0f };
     GLfloat Is1[] = { 1.0f, 0.0f, 0.0f, 1.0f };
     glLightfv(GL_LIGHT1, GL_AMBIENT , Ia1);
-    if(esTarea1){
-        glLightfv(GL_LIGHT1, GL_DIFFUSE , IC);
-    }    
-    else{
-        glLightfv(GL_LIGHT1, GL_DIFFUSE , ISol);
-        Is1[1] = 1.0f; // Brillo en amarillo para identificarla mejor
-    }    
+    glLightfv(GL_LIGHT1, GL_DIFFUSE , IC);
     glLightfv(GL_LIGHT1, GL_SPECULAR, Is1);
     glLightf (GL_LIGHT1, GL_CONSTANT_ATTENUATION , 0.90f);
     glLightf (GL_LIGHT1, GL_LINEAR_ATTENUATION   , 0.05f);
@@ -170,16 +151,18 @@ void initFunc() {
     glEnable(GL_TEXTURE_2D);
     glGenTextures(NT,textureName);
     const char *filename[NT];
-    if(tarea==1){
-        filename[0] = "common/img/imgChess.bmp";
-        filename[1] = "common/img/imgLadrillo.bmp";
-        filename[2] = "common/img/imgMarmol.bmp";
-    } 
+   
+    filename[0] = "common/img/imgChess.bmp";
+    filename[1] = "common/img/imgLadrillo.bmp";
+    filename[2] = "common/img/imgMarmol.bmp";
+
+    /* 
     else{
         filename[0] = "common/img/imgSun.bmp";
         filename[1] = "common/img/imgEarth.bmp";
         filename[2] = "common/img/imgMoon.bmp";
     }
+    */
     for(unsigned i=0; i<NT; i++) {
         
      // Seleccionamos la textura a configurar
@@ -238,26 +221,15 @@ void funDisplay() {
     glLoadIdentity();
     
  // Matriz de Vista V (Cámara)
-    
-    if(esTarea1){
         GLfloat eye[3]    = {0.0f,  3.0f,  5.0f};
         GLfloat center[3] = {0.0f,  2.0f, -5.0f};
         GLfloat up[3]     = {0.0f,  1.0f,  0.0f};
         gluLookAt(    eye[0],    eye[1],    eye[2],
                    center[0], center[1], center[2],
                        up[0],     up[1],     up[2]);
-    } 
-    else{
-        glTranslatef(0.0f, 0.0f, -10.0f);
-    }
+    //glTranslatef(0.0f, 0.0f, zoom);
  // Dibujamos la escena(M)
-    switch (tarea){
-        case 1: P3Tarea1();
-            break;
-        case 2: P3Tarea2();
-            break;
-        default: P3Tarea3();
-    }
+    practica4();
     
  // Intercambiamos los buffers
     glutSwapBuffers();
@@ -282,32 +254,6 @@ void drawLights1() {
     glDisable(GL_COLOR_MATERIAL);
 }
 
-void drawLights2(){
-    
-    glLightfv(GL_LIGHT1, GL_DIFFUSE , ISol);
-    glEnable(GL_LIGHT1);
-    
-    glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-    
-    glLightfv(GL_LIGHT1, GL_POSITION, PLS);
-    
-    glEnable(GL_LIGHT2);
-    if (luna_on)
-        glEnable(GL_LIGHT3);
-    else
-        glDisable(GL_LIGHT3);
-    glEnable(GL_COLOR_MATERIAL);
-    
-    glLightfv(GL_LIGHT2, GL_POSITION, PLT);
-    PLL[0]=lunax;
-    PLL[1]=lunay;
-    PLL[2]=lunaz;
-    glLightfv(GL_LIGHT3, GL_POSITION, PLL);
-
-    glDisable(GL_COLOR_MATERIAL);
-    
-}
 void drawRoom() {
     
  // Definimos el material de la habitación
@@ -382,274 +328,101 @@ void drawRoom() {
     
 }
 
-void drawObject(GLfloat s, GLint c) {
-    
- // Definimos el material del objeto
-    GLfloat Ka[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    GLfloat Kd[] = { 0.7f, 0.7f, 0.3f, 1.0f };
-    GLfloat Ks[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT  , Ka);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE  , Kd);
-    glMaterialfv(GL_FRONT, GL_SPECULAR , Ks);
-    glMaterialf (GL_FRONT, GL_SHININESS, 50.0f);
-    
- // Definimos el objeto
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_TEXTURE_GEN_S);
-    glEnable(GL_TEXTURE_GEN_T);
-    glBindTexture(GL_TEXTURE_2D, textureName[2]);
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    glPushMatrix();
-        glTranslatef(0.0f, 1.0f, -5.0f);
-        glRotatef(rotX, 1.0f, 0.0f, 0.0f);
-        glRotatef(rotY, 0.0f, 1.0f, 0.0f);
-        //glutSolidTeapot(s);
-        glutSolidSphere(1.0,200,200);
-    glPopMatrix();
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_2D);
-    
-}
-
 void keyboard(unsigned char key,int x,int y){
-    switch(key){
-        case '+':
-            if(esTarea1){
-               IC[0]+=0.2;
-               IC[1]+=0.2;
-               IC[2]+=0.2;
-            }
-            else{
-               IA[0]+=0.2;
-               IA[1]+=0.2;
-               IA[2]+=0.2;
-               glLightModelfv(GL_LIGHT_MODEL_AMBIENT, IA);
-            }   
-            break;
-               
-        case '-' :
-            if(esTarea1){
-                IC[0]-=0.2;
-                IC[1]-=0.2;
-                IC[2]-=0.2;
-            }
-            else{
-                IA[0]-=0.2;
-                IA[1]-=0.2;
-                IA[2]-=0.2;
-                glLightModelfv(GL_LIGHT_MODEL_AMBIENT, IA);
-            } 
-            break;
-        case 'e' :
-           luna_on= !luna_on;
-           break;
-    }
+   
     glutPostRedisplay();
 }
 
 void funKeyboard(int key, int x, int y) {
-    if(esTarea1){
-        switch(key) {
-           case GLUT_KEY_UP:
-               if(PL1[2]>-13)
-                    PL1[2] -= 0.5f;
-               break;
-           case GLUT_KEY_DOWN:
-               if(PL1[2]<-0.5)
-                    PL1[2] += 0.5f;
-               break;
-           case GLUT_KEY_LEFT:
-               if(PL1[0]>-4)
-                    PL1[0] -= 0.5f;
-               break;
-           case GLUT_KEY_RIGHT:
-               if(PL1[0]<4)
-                    PL1[0] += 0.5f;
-               break;
-              
-        } 
-    }
-    else{
-        if(anima==true)
-            switch(key) {
-                case GLUT_KEY_F1:
-                    anima = false;
-                    break;
-        }    
-        else{
-            switch(key){
-                case GLUT_KEY_F1:
-                    anima = true;
-                    break;
-                case GLUT_KEY_RIGHT:
-                    //rotY -= 5.0f;
-                    Anio++;
-                    Dia+=365;
-                    Mes+=12;
-                    break;
-                case GLUT_KEY_LEFT:
-                    //rotY += 5.0f;
-                    Anio--;
-                    Dia-=365;
-                    Mes-=12;
-                    break;
-            }
-        }    
-    }
+    
     glutPostRedisplay();    
 }
 
-void funIdle() {
-    /*if(anima){
-        RAnio += 0;//anio;
-        RDia += dia;
-        RMes += mes;
-    }
-     * */ 
-    if (anima) {
-        Anio++;
-        Dia+=365;
-        Mes+=12;
-    }
-    Sleep(50);   
+void funIdle() { 
     glutPostRedisplay();  
 }
 
-void glDrawSphere(char color,float radio, bool luz){
-    switch(color){
-        case 'y':   
-                    glMaterialfv(GL_FRONT, GL_AMBIENT  , KaS);
-                    glMaterialfv(GL_FRONT, GL_DIFFUSE  , KdS);
-                    glMaterialfv(GL_FRONT, GL_SPECULAR , KsS);
-                    glMaterialf (GL_FRONT, GL_SHININESS, 100.0);
-                    if(tarea==3){
-                        glMaterialf (GL_FRONT, GL_SHININESS, 100.0);
-                        glBindTexture(GL_TEXTURE_2D, textureName[0]);
-                        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-                        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-                        glEnable(GL_TEXTURE_GEN_S);
-                        glEnable(GL_TEXTURE_GEN_T);
-                    }
-                        glutSolidSphere(2.0,50,50);
-                    if(tarea==3){    
-                        glDisable(GL_TEXTURE_GEN_T);
-                        glDisable(GL_TEXTURE_GEN_S);
-                    }
-                    break;
-        case 'w':  
-                    glMaterialfv(GL_FRONT, GL_AMBIENT  , KaL);
-                    glMaterialfv(GL_FRONT, GL_DIFFUSE  , KdL);
-                    glMaterialfv(GL_FRONT, GL_SPECULAR , KsL);
-                    glMaterialf (GL_FRONT, GL_SHININESS, 100.0);
-                    if(tarea==3){
-                        glBindTexture(GL_TEXTURE_2D, textureName[2]);
-                        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-                        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-                        glEnable(GL_TEXTURE_GEN_S);
-                        glEnable(GL_TEXTURE_GEN_T);
-                    }    
-                        glutSolidSphere(0.15,15,15);
-                    if(tarea==3){    
-                        glDisable(GL_TEXTURE_GEN_T);
-                        glDisable(GL_TEXTURE_GEN_S);
-                    }
-                    break;
-        case 'b':   
-                    glMaterialfv(GL_FRONT, GL_AMBIENT  , KaT);
-                    glMaterialfv(GL_FRONT, GL_DIFFUSE  , KdT);
-                    glMaterialfv(GL_FRONT, GL_SPECULAR , KsT);
-                    glMaterialf (GL_FRONT, GL_SHININESS, 100.0);
-                    if(tarea==3){
-                        glBindTexture(GL_TEXTURE_2D, textureName[1]);
-                        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-                        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-                        glEnable(GL_TEXTURE_GEN_S);
-                        glEnable(GL_TEXTURE_GEN_T);
-                    } 
-                    glutSolidSphere(0.75,30,30);
-                    if(tarea==3){ 
-                        glDisable(GL_TEXTURE_GEN_T);
-                        glDisable(GL_TEXTURE_GEN_S);
-                    }
-                    break;
-    }
-}
-
-void drawCono(){
-     // Definimos el material del Objeto
-    GLfloat Ka[] = { 0.1, 0.1, 0.1, 1.0 };
-    GLfloat Kd[] = { 0.5, 0.5, 0.2, 1.0 };
-    GLfloat Ks[] = { 0.9, 0.9, 0.9, 1.0 };
-    glMaterialfv(GL_FRONT, GL_AMBIENT  , Ka);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE  , Kd);
-    glMaterialfv(GL_FRONT, GL_SPECULAR , Ks);
-    glMaterialf (GL_FRONT, GL_SHININESS, 100.0);
-    
- // Definimos el Objeto
-    glPushMatrix();
-        glTranslatef(PL1[0], PL1[1]-2,PL1[2]);
-        glRotatef(-90, 1.0, 0.0, 0.0);
-        glutSolidCone(0.2,2.0,10,10);
-    glPopMatrix();
-}
-
-void P3Tarea1() {
-    esTarea1=true;
-    drawLights1();
+void practica4(){
     drawRoom();
-    drawCono();
-    drawObject(1.0f,100);
-}
-void P3Tarea2() {
-        /*
-        1. Colocar una tenue luz ambiental para iluminar la imagen globalmente (esta luz ambiental se puede
-            aumentar con la tecla + y disminuir con la tecla -).
-        2. Colocar una fuente de luz intensa en el sol.
-        3. Añadir un tono amarillo al Sol, azul a la Tierra y blanco a la Luna.
-        4. Transformar la luna en una nueva estrella haciendo que se encienda y apague con la tecla E.
-        */
-    drawLights2();
     glPushMatrix();
-        //Dibujar sol
-        glPushMatrix();
-            //glColor3f(1.0, 1.0, 0.0);
-            glRotatef(90,1.0f,0.0f,0.0f);
-            glDrawSphere('y',2.0f,true);
-        glPopMatrix();
-        //Dibujar tierra
-        //glRotatef(RAnio,0.0f,1.0f,0.0f);
-        glRotatef(Anio%360,0.0,1.0,0.0);
-        glTranslatef(4.0f,0.0f,0.0f);
-        //glRotatef(RDia,0.0f,1.0f,0.0f);
-        glRotatef(Dia%360,0.0,1.0,0.0);
-        glPushMatrix();
-            glColor3f(0.0, 0.0, 1.0);
-            glRotatef(90,1.0f,0.0f,0.0f);
-            glDrawSphere('b',0.5f,false);
-        glPopMatrix();
-        //glRotatef(-RDia,0.0f,1.0f,0.0f);
-        glRotatef(-Dia%360,0.0,1.0,0.0);
-        //Dibujar luna
-        //glRotatef(RMes,0.0f,1.0f,0.0f);
-        glRotatef(Mes%360,0.0f,1.0f,0.0f);
-        glTranslatef(1.5,0.0,0.0);
-        glPushMatrix();
-            glColor3f(1.0, 1.0, 1.0);
-            glRotatef(90,1.0f,0.0f,0.0f);
-            glDrawSphere('w',0.1f,true);
-        glPopMatrix();
-        //cos el x, sin el z
-        //lunax=1.5*cos(RMes);
-        //lunaz=1.5*sin(RMes);
-        lunax = 4.0*cos((Anio%360)*PI/180)+1.5*cos((Anio%360+Mes%360)*PI/180);
-        lunaz = -(4.0*sin((Anio%360)*PI/180)+1.5*sin((Anio%360+Mes%360)*PI/180));
-        //incrementar variables
+    if(dibujar[3])
+        glTranslatef(x4,ty4,z4);
+        glRotatef(rz4, 0.0, 0.0, 1.0);
+        glRotatef(ry4, 0.0, 1.0, 0.0);
+        glRotatef(rx4, 1.0, 0.0, 0.0);
+        drawPieza(4);
     glPopMatrix();
-    esTarea1=false;
+    glPushMatrix();
+    if(dibujar[2])
+        glTranslatef(x3,ty3,z3);
+        glRotatef(rz3, 0.0, 0.0, 1.0);
+        glRotatef(ry3, 0.0, 1.0, 0.0);
+        glRotatef(rx3, 1.0, 0.0, 0.0);
+        drawPieza(3);
+    glPopMatrix();
+    glPushMatrix();
+    if(dibujar[1])
+        glTranslatef(x2,ty2,z2);
+        glRotatef(rz2, 0.0, 0.0, 1.0);
+        glRotatef(ry2, 0.0, 1.0, 0.0);
+        glRotatef(rx2, 1.0, 0.0, 0.0);
+        drawPieza(2);
+    glPopMatrix();
+    glPushMatrix();
+    if(dibujar[0])
+        glTranslatef(x1,ty1,z1);
+        glRotatef(rz1, 0.0, 0.0, 1.0);
+        glRotatef(ry1, 0.0, 1.0, 0.0);
+        glRotatef(rx1, 1.0, 0.0, 0.0);
+        drawPieza(1);
+    glPopMatrix();
 }
-void P3Tarea3() {
-    /*añadir las texturas del Sol, Tierra y Luna*/
-    P3Tarea2();
+void drawPieza(int size){
+    // LADO FRONTAL: lado multicolor
+    glBegin(GL_POLYGON);
+        glColor3f( 1.0, 0.0, 0.0 );     glVertex3f(  0.5, -0.5, -0.5 );      // P1 es rojo
+        glColor3f( 0.0, 1.0, 0.0 );     glVertex3f(  0.5,  0.5, -0.5 );      // P2 es verde
+        glColor3f( 0.0, 0.0, 1.0 );     glVertex3f( -0.5,  0.5, -0.5 );      // P3 es azul
+        glColor3f( 1.0, 0.0, 1.0 );     glVertex3f( -0.5, -0.5, -0.5 );      // P4 es morado
+    glEnd();
+    //LADO TRASERO: lado blanco
+    glBegin(GL_POLYGON);
+        glColor3f(   1.0,  1.0, 1.0 );
+        glVertex3f(  0.5, -0.5, 0.5 );
+        glVertex3f(  0.5,  0.5, 0.5 );
+        glVertex3f( -0.5,  0.5, 0.5 );
+        glVertex3f( -0.5, -0.5, 0.5 );
+    glEnd();
+    // LADO DERECHO: lado morado
+    glBegin(GL_POLYGON);
+        glColor3f(  1.0,  0.0,  1.0 );
+        glVertex3f( 0.5, -0.5, -0.5 );
+        glVertex3f( 0.5,  0.5, -0.5 );
+        glVertex3f( 0.5,  0.5,  0.5 );
+        glVertex3f( 0.5, -0.5,  0.5 );
+    glEnd();
+    // LADO IZQUIERDO: lado verde
+    glBegin(GL_POLYGON);
+        glColor3f(   0.0,  1.0,  0.0 );
+        glVertex3f( -0.5, -0.5,  0.5 );
+        glVertex3f( -0.5,  0.5,  0.5 );
+        glVertex3f( -0.5,  0.5, -0.5 );
+        glVertex3f( -0.5, -0.5, -0.5 );
+    glEnd();
+    // LADO SUPERIOR: lado azul
+    glBegin(GL_POLYGON);
+        glColor3f(   0.0,  0.0,  1.0 );
+        glVertex3f(  0.5,  0.5,  0.5 );
+        glVertex3f(  0.5,  0.5, -0.5 );
+        glVertex3f( -0.5,  0.5, -0.5 );
+        glVertex3f( -0.5,  0.5,  0.5 );
+    glEnd();
+    // LADO INFERIOR: lado rojo
+    glBegin(GL_POLYGON);
+        glColor3f(   1.0,  0.0,  0.0 );
+        glVertex3f(  0.5, -0.5, -0.5 );
+        glVertex3f(  0.5, -0.5,  0.5 );
+        glVertex3f( -0.5, -0.5,  0.5 );
+        glVertex3f( -0.5, -0.5, -0.5 );
+    glEnd();
 }
