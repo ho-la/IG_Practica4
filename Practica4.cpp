@@ -46,6 +46,7 @@ GLfloat KsT[] = { 0.9, 0.9, 0.0, 1.0 }; //Brillo Azul
 
 GLfloat zoom = 5.0f;
 GLboolean dibujar[]={false,false,false,false};
+GLboolean puesto[]={false,false,false,false};
 GLfloat x1=0.0f,x2=0.0f,x3=0.0f,x4=0.0f;
 GLfloat ty1=0.0f,ty2=0.0f,ty3=0.0f,ty4=0.0f,z1=0.0f,z2=0.0f,z3=0.0f,z4=0.0f;
 GLfloat pos1[]={x1,ty1,z1};
@@ -329,12 +330,120 @@ void drawRoom() {
 }
 
 void keyboard(unsigned char key,int x,int y){
-   
+    switch( key){
+        case '1':
+            if(!puesto[0]){
+                puesto[0]=true;
+                dibujar[0]=true;
+                dibujar[1]=false;
+                dibujar[2]=false;
+                dibujar[3]=false;
+            }
+            break;
+        case '2':
+            if(!puesto[1]){
+                puesto[1]=true;
+                dibujar[0]=false;
+                dibujar[1]=true;
+                dibujar[2]=false;
+                dibujar[3]=false;
+            }
+            break;
+        case '3':
+            if(!puesto[2]){
+                puesto[2]=true;
+                dibujar[0]=false;
+                dibujar[1]=false;
+                dibujar[2]=true;
+                dibujar[3]=false;
+            }
+            break;
+        case '4':
+            if(!puesto[3]){
+                puesto[3]=true;
+                dibujar[0]=false;
+                dibujar[1]=false;
+                dibujar[2]=false;
+                dibujar[3]=true;
+            }
+            break; 
+        case 'f':
+            dibujar[0]=false;
+            dibujar[1]=false;
+            dibujar[2]=false;
+            dibujar[3]=false;
+            break;    
+    }
+                
     glutPostRedisplay();
 }
 
 void funKeyboard(int key, int x, int y) {
-    
+    switch(key) {
+        case GLUT_KEY_UP:
+            if(dibujar[0]){
+                z1--;
+            }
+            if(dibujar[1]){
+                z2--;
+            }
+            if(dibujar[2]){
+                z3--;
+            }
+            if(dibujar[3]){
+                z4--;
+            }
+            if(PL1[2]>-13)
+                 PL1[2] -= 0.5f;
+            break;
+        case GLUT_KEY_DOWN:
+            if(dibujar[0]){
+                z1++;
+            }
+            if(dibujar[1]){
+                z2++;
+            }
+            if(dibujar[2]){
+                z3++;
+            }
+            if(dibujar[3]){
+                z4++;
+            }
+            if(PL1[2]<-0.5)
+                 PL1[2] += 0.5f;
+            break;
+        case GLUT_KEY_LEFT:
+            if(dibujar[0]){
+                x1--;
+            }
+            if(dibujar[1]){
+                x2--;
+            }
+            if(dibujar[2]){
+                x3--;
+            }
+            if(dibujar[3]){
+                x4--;
+            }
+            if(PL1[0]>-4)
+                 PL1[0] -= 0.5f;
+            break;
+        case GLUT_KEY_RIGHT:
+            if(dibujar[0]){
+                x1++;
+            }if(dibujar[1]){
+                x2++;
+            }
+            if(dibujar[2]){
+                x3++;
+            }
+            if(dibujar[3]){
+                x4++;
+            }
+            if(PL1[0]<4)
+                 PL1[0] += 0.5f;
+            break;
+    } 
     glutPostRedisplay();    
 }
 
@@ -343,38 +452,42 @@ void funIdle() {
 }
 
 void practica4(){
-    drawRoom();
+    //drawRoom();
     glPushMatrix();
-    if(dibujar[3])
+    if(puesto[3]){
         glTranslatef(x4,ty4,z4);
         glRotatef(rz4, 0.0, 0.0, 1.0);
         glRotatef(ry4, 0.0, 1.0, 0.0);
         glRotatef(rx4, 1.0, 0.0, 0.0);
         drawPieza(4);
+    }
     glPopMatrix();
     glPushMatrix();
-    if(dibujar[2])
+    if(puesto[2]){
         glTranslatef(x3,ty3,z3);
         glRotatef(rz3, 0.0, 0.0, 1.0);
         glRotatef(ry3, 0.0, 1.0, 0.0);
         glRotatef(rx3, 1.0, 0.0, 0.0);
         drawPieza(3);
+    }    
     glPopMatrix();
     glPushMatrix();
-    if(dibujar[1])
+    if(puesto[1]){
         glTranslatef(x2,ty2,z2);
         glRotatef(rz2, 0.0, 0.0, 1.0);
         glRotatef(ry2, 0.0, 1.0, 0.0);
         glRotatef(rx2, 1.0, 0.0, 0.0);
         drawPieza(2);
+    }
     glPopMatrix();
     glPushMatrix();
-    if(dibujar[0])
+    if(puesto[0]){
         glTranslatef(x1,ty1,z1);
         glRotatef(rz1, 0.0, 0.0, 1.0);
         glRotatef(ry1, 0.0, 1.0, 0.0);
         glRotatef(rx1, 1.0, 0.0, 0.0);
         drawPieza(1);
+    }
     glPopMatrix();
 }
 void drawPieza(int size){
