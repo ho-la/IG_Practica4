@@ -71,6 +71,10 @@ GLfloat rot3[]={rx3,ry3,rz3};
 GLfloat rot4[]={rx4,ry4,rz4};
 GLfloat colorP[]={1.0,1.0,1.0};
 GLboolean anima=true;
+GLboolean fin=false;
+GLfloat rotTodoX=0.0f;
+GLfloat rotTodoY=0.0f;
+GLfloat rotTodoZ=0.0f;
 int main(int argc, char** argv) {
     
  // Inicializamos GLUT
@@ -372,47 +376,63 @@ void keyboard(unsigned char key,int x,int y){
             dibujar[1]=false;
             dibujar[2]=false;
             dibujar[3]=false;
+            fin=true;
             break;  
         case 'x':
-            if(dibujar[0]){
-                rx1+=5.0;
+            if(fin){
+                rotTodoX++;
             }
-            if(dibujar[1]){
-                rx2+=5.0;
-            }
-            if(dibujar[2]){
-                rx3+=5.0;
-            }
-            if(dibujar[3]){
-                rx4+=5.0;
+            else{
+                if(dibujar[0]){
+                    rx1+=5.0;
+                }
+                if(dibujar[1]){
+                    rx2+=5.0;
+                }
+                if(dibujar[2]){
+                    rx3+=5.0;
+                }
+                if(dibujar[3]){
+                    rx4+=5.0;
+                }
             }
             break;
         case 'y':
-            if(dibujar[0]){
-                ry1+=5.0;
+            if(fin){
+                rotTodoY++;
             }
-            if(dibujar[1]){
-                ry2+=5.0;
-            }
-            if(dibujar[2]){
-                ry3+=5.0;
-            }
-            if(dibujar[3]){
-                ry4+=5.0;
+            else{
+                if(dibujar[0]){
+                    ry1+=5.0;
+                }
+                if(dibujar[1]){
+                    ry2+=5.0;
+                }
+                if(dibujar[2]){
+                    ry3+=5.0;
+                }
+                if(dibujar[3]){
+                    ry4+=5.0;
+                }
             }
             break;
         case 'z':
-            if(dibujar[0]){
-                rz1+=5.0;
+            if(fin){
+                rotTodoZ++;
             }
-            if(dibujar[1]){
-                rz2+=5.0;
-            }
-            if(dibujar[2]){
-                rz3+=5.0;
-            }
-            if(dibujar[3]){
-                rz4+=5.0;
+            else{
+                if(dibujar[0]){
+                    rz1+=5.0;
+                }
+                if(dibujar[1]){
+                    rz2+=5.0;
+                }
+                if(dibujar[2]){
+                    rz3+=5.0;
+                }
+                if(dibujar[3]){
+                    rz4+=5.0;
+                }
             }
             break; 
         case '+':
@@ -436,84 +456,84 @@ void funKeyboard(int key, int x, int y) {
     switch(key) {
         case GLUT_KEY_UP:
             if(dibujar[0]){
-                z1--;
+                z1-=0.5f;
             }
             if(dibujar[1]){
-                z2--;
+                z2-=0.5f;
             }
             if(dibujar[2]){
-                z3--;
+                z3-=0.5f;
             }
             if(dibujar[3]){
-                z4--;
+                z4-=0.5f;
             }
             break;
         case GLUT_KEY_DOWN:
             if(dibujar[0]){
-                z1++;
+                z1+=0.5f;
             }
             if(dibujar[1]){
-                z2++;
+                z2+=0.5f;
             }
             if(dibujar[2]){
-                z3++;
+                z3+=0.5f;
             }
             if(dibujar[3]){
-                z4++;
+                z4+=0.5f;
             }
             break;
         case GLUT_KEY_LEFT:
             if(dibujar[0]){
-                x1--;
+                x1-=0.5f;
             }
             if(dibujar[1]){
-                x2--;
+                x2-=0.5f;
             }
             if(dibujar[2]){
-                x3--;
+                x3-=0.5f;
             }
             if(dibujar[3]){
-                x4--;
+                x4-=0.5f;
             }
             break;
         case GLUT_KEY_RIGHT:
             if(dibujar[0]){
-                x1++;
+                x1+=0.5f;
             }if(dibujar[1]){
-                x2++;
+                x2+=0.5f;
             }
             if(dibujar[2]){
-                x3++;
+                x3+=0.5f;
             }
             if(dibujar[3]){
-                x4++;
+                x4+=0.5f;
             }
             break;
         case GLUT_KEY_F1:
             if(dibujar[0]){
-                ty1--;
+                ty1-=0.5f;
             }
             if(dibujar[1]){
-                ty2--;
+                ty2-=0.5f;
             }
             if(dibujar[2]){
-                ty3--;
+                ty3-=0.5f;
             }
             if(dibujar[3]){
-                ty4--;
+                ty4-=0.5f;
             }
             break;
         case GLUT_KEY_F2:
             if(dibujar[0]){
-                ty1++;
+                ty1+=0.5f;
             }if(dibujar[1]){
-                ty2++;
+                ty2+=0.5f;
             }
             if(dibujar[2]){
-                ty3++;
+                ty3+=0.5f;
             }
             if(dibujar[3]){
-                ty4++;
+                ty4+=0.5f;
             }
             break;    
     } 
@@ -527,6 +547,9 @@ void funIdle() {
 void practica4(){
     drawLights1();
     //drawRoom();
+    glRotatef(rotTodoZ, 0.0, 0.0, 1.0);
+    glRotatef(rotTodoY, 0.0, 1.0, 0.0);
+    glRotatef(rotTodoX, 1.0, 0.0, 0.0);
     glPushMatrix();
     if(puesto[3]){
         //El ladrillo azul tiene longitud 4
@@ -589,55 +612,55 @@ void drawPieza(int size,char color){
     glBegin(GL_QUADS); 
         glNormal3f( 0.0f, 0.0f,  -1.0f);
         //glColor3f(colorP[0],colorP[1],colorP[2]);     
-        glVertex3f( -0.5f,  0.5f, -0.5f );       
-        glVertex3f(  0.5f,  0.5f, -0.5f );   
-        glVertex3f(  0.5f, -0.5f, -0.5f );  
-        glVertex3f( -0.5f, -0.5f, -0.5f );   
+        glVertex3f( -(size/2.0),  0.5f, -0.5f );       
+        glVertex3f(  (size/2.0),  0.5f, -0.5f );   
+        glVertex3f(  (size/2.0), -0.5f, -0.5f );  
+        glVertex3f( -(size/2.0), -0.5f, -0.5f );   
     glEnd();
     //LADO FRONTAL: 
     glBegin(GL_QUADS);
         glNormal3f( 0.0f, 0.0f,  1.0f);
         //glColor3f(colorP[0],colorP[1],colorP[2]);
-        glVertex3f( -0.5f, -0.5f, 0.5f );
-        glVertex3f(  0.5f, -0.5f, 0.5f );
-        glVertex3f(  0.5f,  0.5f, 0.5f );
-        glVertex3f( -0.5f,  0.5f, 0.5f );
+        glVertex3f( -(size/2.0), -0.5f, 0.5f );
+        glVertex3f(  (size/2.0), -0.5f, 0.5f );
+        glVertex3f(  (size/2.0),  0.5f, 0.5f );
+        glVertex3f( -(size/2.0),  0.5f, 0.5f );
     glEnd();
      // LADO SUPERIOR: 
     glBegin(GL_QUADS);
         glNormal3f( 0.0f, 1.0f,  0.0f);
         //glColor3f(colorP[0],colorP[1],colorP[2]);
-        glVertex3f( -0.5f,  0.5f,  0.5f );
-        glVertex3f(  0.5f,  0.5f,  0.5f );
-        glVertex3f(  0.5f,  0.5f, -0.5f );
-        glVertex3f( -0.5f,  0.5f, -0.5f );
+        glVertex3f( -(size/2.0),  0.5f,  0.5f );
+        glVertex3f(  (size/2.0),  0.5f,  0.5f );
+        glVertex3f(  (size/2.0),  0.5f, -0.5f );
+        glVertex3f( -(size/2.0),  0.5f, -0.5f );
     glEnd();
     // LADO INFERIOR: 
     glBegin(GL_QUADS);
         glNormal3f( 0.0f, -1.0f,  0.0f);
         //glColor3f(colorP[0],colorP[1],colorP[2]);
-        glVertex3f( -0.5f, -0.5f, -0.5f );
-        glVertex3f(  0.5f, -0.5f, -0.5f );
-        glVertex3f(  0.5f, -0.5f,  0.5f );
-        glVertex3f( -0.5f, -0.5f,  0.5f );
+        glVertex3f( -(size/2.0), -0.5f, -0.5f );
+        glVertex3f(  (size/2.0), -0.5f, -0.5f );
+        glVertex3f(  (size/2.0), -0.5f,  0.5f );
+        glVertex3f( -(size/2.0), -0.5f,  0.5f );
     glEnd();
     // LADO DERECHO: 
     glBegin(GL_QUADS);
         glNormal3f( 1.0f, 0.0f,  0.0f);
         //glColor3f(colorP[0],colorP[1],colorP[2]);
-        glVertex3f( 0.5f, -0.5f, -0.5f );
-        glVertex3f( 0.5f,  0.5f, -0.5f );
-        glVertex3f( 0.5f,  0.5f,  0.5f );
-        glVertex3f( 0.5f, -0.5f,  0.5f );
+        glVertex3f( (size/2.0), -0.5f, -0.5f );
+        glVertex3f( (size/2.0),  0.5f, -0.5f );
+        glVertex3f( (size/2.0),  0.5f,  0.5f );
+        glVertex3f( (size/2.0), -0.5f,  0.5f );
     glEnd();
     // LADO IZQUIERDO: 
     glBegin(GL_QUADS);
         glNormal3f( -1.0f, 0.0f,  0.0f);
         //glColor3f(colorP[0],colorP[1],colorP[2]);
-        glVertex3f( -0.5f, -0.5f,  0.5f );
-        glVertex3f( -0.5f,  0.5f,  0.5f );
-        glVertex3f( -0.5f,  0.5f, -0.5f );
-        glVertex3f( -0.5f, -0.5f, -0.5f );
+        glVertex3f( -(size/2.0), -0.5f,  0.5f );
+        glVertex3f( -(size/2.0),  0.5f,  0.5f );
+        glVertex3f( -(size/2.0),  0.5f, -0.5f );
+        glVertex3f( -(size/2.0), -0.5f, -0.5f );
     glEnd();
    
 }
