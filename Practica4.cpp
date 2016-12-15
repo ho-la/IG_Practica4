@@ -22,9 +22,10 @@ void drawPieza(int size,char color);
 int w = 900;
 int h = 500;
 
-//GLfloat PL0[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-GLfloat PL0[] = { 0.0f, 0.0f, -10.0f, 1.0f };//ultimo parametro 0=direccionar,1=posicional
-GLfloat PL1[] = {3.0f, 2.0f, -6.0f, 1.0f };//Posicion de la luz de la vela
+//GLfloat PL0[] = { 1.0f, 1.0f, 1.0f, 0.0f };//ultimo parametro 0=direccionar,1=posicional
+GLfloat PL0[] = { 0.0f, 1.0f, 6.0f, 1.0f };//Luz sol
+
+GLfloat PL1[] = {0.0f, 0.0f, -1.0f, 1.0f };//Posicion de la luz de la vela
 GLfloat IC[]  = { 1.9f, 1.5f, 1.5f, 1.0f };
 GLfloat IA[]  = {0.2f, 0.2f, 0.2f, 1.0f };
 GLfloat ISol[]  = { 5.0f, 5.0f, 5.0f, 1.0f };
@@ -37,9 +38,19 @@ GLuint textureName[NT];
 GLfloat KaS[] = { 0.1, 0.1, 0.1, 1.0 };
 GLfloat KdS[] = { 0.9, 0.9, 0.2, 1.0 };
 GLfloat KsS[] = { 0.9, 0.9, 0.1, 1.0 };//Brillo amarillo
+
+GLfloat KaV[] = { 0.1, 0.1, 0.1, 1.0 };
+GLfloat KdV[] = { 0.2, 0.9, 0.2, 1.0 };
+GLfloat KsV[] = { 0.1, 0.9, 0.1, 1.0 };//Brillo verde
+
+GLfloat KaR[] = { 0.1, 0.1, 0.1, 1.0 };
+GLfloat KdR[] = { 0.9, 0.2, 0.2, 1.0 };
+GLfloat KsR[] = { 0.9, 0.1, 0.1, 1.0 };//Brillo rojo
+
 GLfloat KaL[] = { 0.1, 0.1, 0.1, 1.0 };
 GLfloat KdL[] = { 0.7, 0.7, 0.7, 1.0 };
 GLfloat KsL[] = { 0.9, 0.9, 0.9, 1.0 }; //Brillo Blanco
+
 GLfloat KaT[] = { 0.1, 0.1, 0.1, 1.0 };
 GLfloat KdT[] = { 0.2, 0.2, 0.7, 1.0 };
 GLfloat KsT[] = { 0.9, 0.9, 0.0, 1.0 }; //Brillo Azul
@@ -48,7 +59,7 @@ GLfloat zoom = 5.0f;
 GLboolean dibujar[]={false,false,false,false};
 GLboolean puesto[]={false,false,false,false};
 GLfloat x1=0.0f,x2=0.0f,x3=0.0f,x4=0.0f;
-GLfloat ty1=0.0f,ty2=0.0f,ty3=0.0f,ty4=0.0f,z1=0.0f,z2=0.0f,z3=0.0f,z4=0.0f;
+GLfloat ty1=0.0f,ty2=0.0f,ty3=0.0f,ty4=0.0f,z1=-3.0f,z2=-3.0f,z3=-3.0f,z4=-3.0f;
 GLfloat pos1[]={x1,ty1,z1};
 GLfloat pos2[]={x2,ty2,z2};
 GLfloat pos3[]={x3,ty3,z3};
@@ -116,16 +127,7 @@ void initFunc() {
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, IA);
     // Cálculo de la iluminación an ambas caras
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-    
- // Parámetros de la Luz 0 (direccional=sol)
-    GLfloat Ia0[] = { 0.1, 0.1, 0.1, 1.0 };
-    GLfloat Id0[] = { 0.5, 0.5, 0.5, 1.0 };
-    GLfloat Is0[] = { 0.3, 0.3, 0.3, 1.0 }; // Brillo en blanco para identificarla mejor
-    glLightfv(GL_LIGHT0, GL_AMBIENT , Ia0);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE , Id0);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, Is0);
-    glEnable(GL_LIGHT0);
-    
+       
  // Parámetros de la Luz 1 (posicional=bombilla)
     GLfloat Ia1[] = { 0.1f, 0.1f, 0.1f, 1.0f };
     //GLfloat Id1[] = { 0.8f, 0.8f, 0.8f, 1.0f };
@@ -137,17 +139,6 @@ void initFunc() {
     glLightf (GL_LIGHT1, GL_LINEAR_ATTENUATION   , 0.05f);
     glLightf (GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.01f);
     glEnable(GL_LIGHT1);
-    
-     // Parámetros de la Luz Luna (posicional=bombilla)
-    GLfloat Ial[] = { 0.1, 0.1, 0.1, 1.0 };
-    GLfloat Idl[] = { 1.9, 1.9, 1.9, 1.0 };
-    GLfloat Isl[] = { 1.0, 1.0, 1.0, 1.0 }; // Brillo en blanco para identificarla mejor
-    glLightfv(GL_LIGHT3, GL_AMBIENT , Ial);
-    glLightfv(GL_LIGHT3, GL_DIFFUSE , Idl);
-    glLightfv(GL_LIGHT3, GL_SPECULAR, Isl);
-    glLightf (GL_LIGHT3, GL_CONSTANT_ATTENUATION , 0.90);
-    glLightf (GL_LIGHT3, GL_LINEAR_ATTENUATION   , 0.05);
-    glLightf (GL_LIGHT3, GL_QUADRATIC_ATTENUATION, 0.01);
     
  // Modelo de Sombreado
     glShadeModel(GL_SMOOTH);
@@ -232,8 +223,8 @@ void funDisplay() {
         GLfloat up[3]     = {0.0f,  1.0f,  0.0f};
         gluLookAt(    eye[0],    eye[1],    eye[2],
                    center[0], center[1], center[2],
-                       up[0],     up[1],     up[2]);
-    //glTranslatef(0.0f, 0.0f, zoom);
+                       up[0],     up[1],     up[2]);  
+    //glTranslatef(0.0f, 3.0f, 5.0f);
  // Dibujamos la escena(M)
     practica4();
     
@@ -243,20 +234,20 @@ void funDisplay() {
 }
 
 void drawLights1() {
-    
+
     glLightfv(GL_LIGHT1, GL_DIFFUSE , IC);
     glEnable(GL_LIGHT1);
  // Definimos el material de las esferas que representan las luces mediante glColor
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
     
- 
     glPushMatrix();
         glTranslatef(PL1[0],PL1[1],PL1[2]);
-        glutSolidSphere(0.02,10,10);
+        glutSolidSphere(0.5,10,10);
     glPopMatrix();
+    
     glLightfv(GL_LIGHT1, GL_POSITION, PL1);
-
+    
     glDisable(GL_COLOR_MATERIAL);
 }
 
@@ -423,6 +414,19 @@ void keyboard(unsigned char key,int x,int y){
             if(dibujar[3]){
                 rz4+=5.0;
             }
+            break; 
+        case '+':
+            IA[0]+=0.2;
+            IA[1]+=0.2;
+            IA[2]+=0.2;
+            glLightModelfv(GL_LIGHT_MODEL_AMBIENT, IA);
+            break;
+               
+        case '-' :
+            IA[0]-=0.2;
+            IA[1]-=0.2;
+            IA[2]-=0.2;
+            glLightModelfv(GL_LIGHT_MODEL_AMBIENT, IA);
             break;    
     }      
     glutPostRedisplay();
@@ -521,6 +525,7 @@ void funIdle() {
 }
 
 void practica4(){
+    drawLights1();
     //drawRoom();
     glPushMatrix();
     if(puesto[3]){
@@ -529,6 +534,10 @@ void practica4(){
         glRotatef(rz4, 0.0, 0.0, 1.0);
         glRotatef(ry4, 0.0, 1.0, 0.0);
         glRotatef(rx4, 1.0, 0.0, 0.0);
+        glMaterialfv(GL_FRONT, GL_AMBIENT  , KaT);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE  , KdT);
+        glMaterialfv(GL_FRONT, GL_SPECULAR , KsT);
+        glMaterialf (GL_FRONT, GL_SHININESS, 100.0);
         drawPieza(4,'b');
     }
     glPopMatrix();
@@ -539,6 +548,10 @@ void practica4(){
         glRotatef(rz3, 0.0, 0.0, 1.0);
         glRotatef(ry3, 0.0, 1.0, 0.0);
         glRotatef(rx3, 1.0, 0.0, 0.0);
+        glMaterialfv(GL_FRONT, GL_AMBIENT  , KaV);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE  , KdV);
+        glMaterialfv(GL_FRONT, GL_SPECULAR , KsV);
+        glMaterialf (GL_FRONT, GL_SHININESS, 100.0);
         drawPieza(3,'g');
     }    
     glPopMatrix();
@@ -549,6 +562,10 @@ void practica4(){
         glRotatef(rz2, 0.0, 0.0, 1.0);
         glRotatef(ry2, 0.0, 1.0, 0.0);
         glRotatef(rx2, 1.0, 0.0, 0.0);
+        glMaterialfv(GL_FRONT, GL_AMBIENT  , KaR);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE  , KdR);
+        glMaterialfv(GL_FRONT, GL_SPECULAR , KsR);
+        glMaterialf (GL_FRONT, GL_SHININESS, 100.0);
         drawPieza(2,'r');
     }
     glPopMatrix();
@@ -559,83 +576,69 @@ void practica4(){
         glRotatef(rz1, 0.0, 0.0, 1.0);
         glRotatef(ry1, 0.0, 1.0, 0.0);
         glRotatef(rx1, 1.0, 0.0, 0.0);
+        glMaterialfv(GL_FRONT, GL_AMBIENT  , KaS);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE  , KdS);
+        glMaterialfv(GL_FRONT, GL_SPECULAR , KsS);
+        glMaterialf (GL_FRONT, GL_SHININESS, 100.0);
         drawPieza(1,'y');
     }
     glPopMatrix();
 }
 void drawPieza(int size,char color){
-    switch(color){
-        case 'y':
-            //glColor3f( 1.0, 1.0, 0.0 );
-            colorP[0]=1.0;
-            colorP[1]=1.0;
-            colorP[2]=0.0;
-            break;
-        case 'b':
-            //glColor3f( 0.0, 0.0, 1.0 );
-            colorP[0]=0.0;
-            colorP[1]=0.0;
-            colorP[2]=1.0;
-            break;
-        case 'g':
-            //glColor3f( 0.0, 1.0, 0.0 );
-            colorP[0]=0.0;
-            colorP[1]=1.0;
-            colorP[2]=0.0;
-            break;
-        case 'r':
-            //glColor3f( 1.0, 0.0, 0.0 );
-            colorP[0]=1.0;
-            colorP[1]=0.0;
-            colorP[2]=0.0;
-            break;
-    } 
-    // LADO FRONTAL: 
-    glBegin(GL_POLYGON);
-        glColor3f(colorP[0],colorP[1],colorP[2]);
-        glVertex3f(  0.5, -0.5, -0.5 );    
-        glVertex3f(  0.5,  0.5, -0.5 );      
-        glVertex3f( -0.5,  0.5, -0.5 );     
-        glVertex3f( -0.5, -0.5, -0.5 );     
+    // LADO TRASERO: 
+    glBegin(GL_QUADS); 
+        glNormal3f( 0.0f, 0.0f,  -1.0f);
+        //glColor3f(colorP[0],colorP[1],colorP[2]);     
+        glVertex3f( -0.5f,  0.5f, -0.5f );       
+        glVertex3f(  0.5f,  0.5f, -0.5f );   
+        glVertex3f(  0.5f, -0.5f, -0.5f );  
+        glVertex3f( -0.5f, -0.5f, -0.5f );   
     glEnd();
-    //LADO TRASERO: 
-    glBegin(GL_POLYGON);
-        glColor3f(colorP[0],colorP[1],colorP[2]);
-        glVertex3f(  0.5, -0.5, 0.5 );
-        glVertex3f(  0.5,  0.5, 0.5 );
-        glVertex3f( -0.5,  0.5, 0.5 );
-        glVertex3f( -0.5, -0.5, 0.5 );
+    //LADO FRONTAL: 
+    glBegin(GL_QUADS);
+        glNormal3f( 0.0f, 0.0f,  1.0f);
+        //glColor3f(colorP[0],colorP[1],colorP[2]);
+        glVertex3f( -0.5f, -0.5f, 0.5f );
+        glVertex3f(  0.5f, -0.5f, 0.5f );
+        glVertex3f(  0.5f,  0.5f, 0.5f );
+        glVertex3f( -0.5f,  0.5f, 0.5f );
     glEnd();
-    // LADO DERECHO: 
-    glBegin(GL_POLYGON);
-        glColor3f(colorP[0],colorP[1],colorP[2]);
-        glVertex3f( 0.5, -0.5, -0.5 );
-        glVertex3f( 0.5,  0.5, -0.5 );
-        glVertex3f( 0.5,  0.5,  0.5 );
-        glVertex3f( 0.5, -0.5,  0.5 );
-    glEnd();
-    // LADO IZQUIERDO: 
-    glBegin(GL_POLYGON);
-        glColor3f(colorP[0],colorP[1],colorP[2]);
-        glVertex3f( -0.5, -0.5,  0.5 );
-        glVertex3f( -0.5,  0.5,  0.5 );
-        glVertex3f( -0.5,  0.5, -0.5 );
-        glVertex3f( -0.5, -0.5, -0.5 );
-    glEnd();
-    // LADO SUPERIOR: 
-    glBegin(GL_POLYGON);
-        glColor3f(colorP[0],colorP[1],colorP[2]);
-        glVertex3f(  0.5,  0.5,  0.5 );
-        glVertex3f(  0.5,  0.5, -0.5 );
-        glVertex3f( -0.5,  0.5, -0.5 );
-        glVertex3f( -0.5,  0.5,  0.5 );
+     // LADO SUPERIOR: 
+    glBegin(GL_QUADS);
+        glNormal3f( 0.0f, 1.0f,  0.0f);
+        //glColor3f(colorP[0],colorP[1],colorP[2]);
+        glVertex3f( -0.5f,  0.5f,  0.5f );
+        glVertex3f(  0.5f,  0.5f,  0.5f );
+        glVertex3f(  0.5f,  0.5f, -0.5f );
+        glVertex3f( -0.5f,  0.5f, -0.5f );
     glEnd();
     // LADO INFERIOR: 
-    glBegin(GL_POLYGON);
-        glColor3f(colorP[0],colorP[1],colorP[2]);
-        glVertex3f(  0.5, -0.5, -0.5 );
-        glVertex3f(  0.5, -0.5,  0.5 );
-        glVertex3f( -0.5, -0.5,  0.5 );
-        glVertex3f( -0.5, -0.5, -0.5 );
+    glBegin(GL_QUADS);
+        glNormal3f( 0.0f, -1.0f,  0.0f);
+        //glColor3f(colorP[0],colorP[1],colorP[2]);
+        glVertex3f( -0.5f, -0.5f, -0.5f );
+        glVertex3f(  0.5f, -0.5f, -0.5f );
+        glVertex3f(  0.5f, -0.5f,  0.5f );
+        glVertex3f( -0.5f, -0.5f,  0.5f );
     glEnd();
+    // LADO DERECHO: 
+    glBegin(GL_QUADS);
+        glNormal3f( 1.0f, 0.0f,  0.0f);
+        //glColor3f(colorP[0],colorP[1],colorP[2]);
+        glVertex3f( 0.5f, -0.5f, -0.5f );
+        glVertex3f( 0.5f,  0.5f, -0.5f );
+        glVertex3f( 0.5f,  0.5f,  0.5f );
+        glVertex3f( 0.5f, -0.5f,  0.5f );
+    glEnd();
+    // LADO IZQUIERDO: 
+    glBegin(GL_QUADS);
+        glNormal3f( -1.0f, 0.0f,  0.0f);
+        //glColor3f(colorP[0],colorP[1],colorP[2]);
+        glVertex3f( -0.5f, -0.5f,  0.5f );
+        glVertex3f( -0.5f,  0.5f,  0.5f );
+        glVertex3f( -0.5f,  0.5f, -0.5f );
+        glVertex3f( -0.5f, -0.5f, -0.5f );
+    glEnd();
+   
 }
+
