@@ -447,7 +447,36 @@ void keyboard(unsigned char key,int x,int y){
             IA[1]-=0.2;
             IA[2]-=0.2;
             glLightModelfv(GL_LIGHT_MODEL_AMBIENT, IA);
-            break;    
+            break;
+        case 'D':    
+        case 'd':
+            if(dibujar[0]){
+                ty1-=0.5f;
+            }
+            if(dibujar[1]){
+                ty2-=0.5f;
+            }
+            if(dibujar[2]){
+                ty3-=0.5f;
+            }
+            if(dibujar[3]){
+                ty4-=0.5f;
+            }
+            break;
+        case 'U':    
+        case 'u':
+            if(dibujar[0]){
+                ty1+=0.5f;
+            }if(dibujar[1]){
+                ty2+=0.5f;
+            }
+            if(dibujar[2]){
+                ty3+=0.5f;
+            }
+            if(dibujar[3]){
+                ty4+=0.5f;
+            }
+            break;      
     }      
     glutPostRedisplay();
 }
@@ -509,33 +538,7 @@ void funKeyboard(int key, int x, int y) {
                 x4+=0.5f;
             }
             break;
-        case GLUT_KEY_F1:
-            if(dibujar[0]){
-                ty1-=0.5f;
-            }
-            if(dibujar[1]){
-                ty2-=0.5f;
-            }
-            if(dibujar[2]){
-                ty3-=0.5f;
-            }
-            if(dibujar[3]){
-                ty4-=0.5f;
-            }
-            break;
-        case GLUT_KEY_F2:
-            if(dibujar[0]){
-                ty1+=0.5f;
-            }if(dibujar[1]){
-                ty2+=0.5f;
-            }
-            if(dibujar[2]){
-                ty3+=0.5f;
-            }
-            if(dibujar[3]){
-                ty4+=0.5f;
-            }
-            break;    
+         
     } 
     glutPostRedisplay();    
 }
