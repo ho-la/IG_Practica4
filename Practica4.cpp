@@ -25,7 +25,9 @@ int h = 500;
 //GLfloat PL0[] = { 1.0f, 1.0f, 1.0f, 0.0f };//ultimo parametro 0=direccionar,1=posicional
 GLfloat PL0[] = { 0.0f, 1.0f, 6.0f, 1.0f };//Luz sol
 
-GLfloat PL1[] = {0.0f, 0.0f, -1.0f, 1.0f };//Posicion de la luz de la vela
+GLfloat PL1[] = {5.0f, 0.0f, 0.0f, 1.0f };//Posicion de la luz de la vela
+GLfloat PL2[] = {0.0f, 4.0f, 0.0f, 1.0f };//Posicion de la luz de la vela
+GLfloat PL3[] = {0.0f, 0.0f, 9.0f, 1.0f };//Posicion de la luz de la vela
 GLfloat IC[]  = { 1.9f, 1.5f, 1.5f, 1.0f };
 GLfloat IA[]  = {0.2f, 0.2f, 0.2f, 1.0f };
 GLfloat ISol[]  = { 5.0f, 5.0f, 5.0f, 1.0f };
@@ -59,7 +61,7 @@ GLfloat zoom = 5.0f;
 GLboolean dibujar[]={false,false,false,false};
 GLboolean puesto[]={false,false,false,false};
 GLfloat x1=0.0f,x2=0.0f,x3=0.0f,x4=0.0f;
-GLfloat ty1=0.0f,ty2=0.0f,ty3=0.0f,ty4=0.0f,z1=-3.0f,z2=-3.0f,z3=-3.0f,z4=-3.0f;
+GLfloat ty1=0.0f,ty2=0.0f,ty3=0.0f,ty4=0.0f,z1=0.0f,z2=0.0f,z3=0.0f,z4=0.0f;
 GLfloat pos1[]={x1,ty1,z1};
 GLfloat pos2[]={x2,ty2,z2};
 GLfloat pos3[]={x3,ty3,z3};
@@ -220,15 +222,23 @@ void funDisplay() {
  // Para configurar las matrices M y V
     glMatrixMode(GL_MODELVIEW);  
     glLoadIdentity();
-    
+    //glTranslatef(0.0f,0.0f,zoom);
  // Matriz de Vista V (Cámara)
+        GLfloat eye[3]    = {0.0f,  0.0f,  10.0f};
+        GLfloat center[3] = {0.0f,  0.0f,  0.0f};
+        GLfloat up[3]     = {0.0f,  1.0f,  0.0f};
+        gluLookAt(    eye[0],    eye[1],    eye[2],
+                   center[0], center[1], center[2],
+                       up[0],     up[1],     up[2]); 
+        /*
         GLfloat eye[3]    = {0.0f,  3.0f,  5.0f};
         GLfloat center[3] = {0.0f,  2.0f, -5.0f};
         GLfloat up[3]     = {0.0f,  1.0f,  0.0f};
         gluLookAt(    eye[0],    eye[1],    eye[2],
                    center[0], center[1], center[2],
                        up[0],     up[1],     up[2]);  
-    //glTranslatef(0.0f, 3.0f, 5.0f);
+       */
+    //glTranslatef(0.0f, 0.0f, zoom);
  // Dibujamos la escena(M)
     practica4();
     
@@ -247,7 +257,7 @@ void drawLights1() {
     
     glPushMatrix();
         glTranslatef(PL1[0],PL1[1],PL1[2]);
-        glutSolidSphere(0.5,10,10);
+        glutSolidSphere(0.1,10,10);
     glPopMatrix();
     
     glLightfv(GL_LIGHT1, GL_POSITION, PL1);
@@ -332,7 +342,7 @@ void drawRoom() {
 void keyboard(unsigned char key,int x,int y){
     switch( key){
         case '1':
-            if(!puesto[0]){
+            if(!puesto[0] && !fin){
                 puesto[0]=true;
                 dibujar[0]=true;
                 dibujar[1]=false;
@@ -341,7 +351,7 @@ void keyboard(unsigned char key,int x,int y){
             }
             break;
         case '2':
-            if(!puesto[1]){
+            if(!puesto[1] && !fin){
                 puesto[1]=true;
                 dibujar[0]=false;
                 dibujar[1]=true;
@@ -350,7 +360,7 @@ void keyboard(unsigned char key,int x,int y){
             }
             break;
         case '3':
-            if(!puesto[2]){
+            if(!puesto[2] && !fin){
                 puesto[2]=true;
                 dibujar[0]=false;
                 dibujar[1]=false;
@@ -359,7 +369,7 @@ void keyboard(unsigned char key,int x,int y){
             }
             break;
         case '4':
-            if(!puesto[3]){
+            if(!puesto[3] && !fin){
                 puesto[3]=true;
                 dibujar[0]=false;
                 dibujar[1]=false;
@@ -368,10 +378,6 @@ void keyboard(unsigned char key,int x,int y){
             }
             break; 
         case '0':
-            puesto[0]=true;
-            puesto[1]=true;
-            puesto[2]=true;
-            puesto[3]=true;
             dibujar[0]=false;
             dibujar[1]=false;
             dibujar[2]=false;
