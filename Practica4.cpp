@@ -151,7 +151,7 @@ void initFunc() {
     glLightf (GL_LIGHT1, GL_LINEAR_ATTENUATION   , 0.05f);
     glLightf (GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.01f);
     glEnable(GL_LIGHT1);
-    
+    /*
     glLightfv(GL_LIGHT2, GL_AMBIENT , Ia1);
     glLightfv(GL_LIGHT2, GL_DIFFUSE , IC);
     glLightfv(GL_LIGHT2, GL_SPECULAR, Is1);
@@ -714,7 +714,7 @@ void funIdle() {
 void practica4(){
     glPushMatrix();
         drawLights1();
-        drawLights0();
+        //drawLights0();
     glPopMatrix();
     /*
     drawLights12();
