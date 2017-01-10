@@ -23,11 +23,14 @@ int w = 900;
 int h = 500;
 
 //GLfloat PL0[] = { 1.0f, 1.0f, 1.0f, 0.0f };//ultimo parametro 0=direccionar,1=posicional
-GLfloat PL0[] = { 0.0f, 1.0f, 6.0f, 1.0f };//Luz sol
+GLfloat PL0[] = { 0.0f,0.0f,11.0f };
 
 GLfloat PL1[] = {5.0f, 0.0f, 0.0f, 1.0f };//Posicion de la luz de la vela
+GLfloat PL12[] = {-5.0f, 0.0f, 0.0f, 1.0f };//Posicion de la luz de la vela
 GLfloat PL2[] = {0.0f, 4.0f, 0.0f, 1.0f };//Posicion de la luz de la vela
+GLfloat PL22[] = {0.0f, -4.0f, 0.0f, 1.0f };//Posicion de la luz de la vela
 GLfloat PL3[] = {0.0f, 0.0f, 9.0f, 1.0f };//Posicion de la luz de la vela
+GLfloat PL32[] = {0.0f, 0.0f, -9.0f, 1.0f };//Posicion de la luz de la vela
 GLfloat IC[]  = { 1.9f, 1.5f, 1.5f, 1.0f };
 GLfloat IA[]  = {0.2f, 0.2f, 0.2f, 1.0f };
 GLfloat ISol[]  = { 5.0f, 5.0f, 5.0f, 1.0f };
@@ -71,12 +74,9 @@ GLfloat rot1[]={rx1,ry1,rz1};
 GLfloat rot2[]={rx2,ry2,rz2};
 GLfloat rot3[]={rx3,ry3,rz3};
 GLfloat rot4[]={rx4,ry4,rz4};
-GLfloat colorP[]={1.0,1.0,1.0};
-GLboolean anima=true;
-GLboolean fin=false;
-GLfloat rotTodoX=0.0f;
-GLfloat rotTodoY=0.0f;
-GLfloat rotTodoZ=0.0f;
+GLboolean anima=false, fin=false;
+GLfloat rotTodoX=0.0f, rotTodoY=0.0f, rotTodoZ=0.0f;
+GLfloat rotLuzY=0.0f;
 int main(int argc, char** argv) {
     
  // Inicializamos GLUT
@@ -146,6 +146,46 @@ void initFunc() {
     glLightf (GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.01f);
     glEnable(GL_LIGHT1);
     
+    glLightfv(GL_LIGHT2, GL_AMBIENT , Ia1);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE , IC);
+    glLightfv(GL_LIGHT2, GL_SPECULAR, Is1);
+    glLightf (GL_LIGHT2, GL_CONSTANT_ATTENUATION , 0.90f);
+    glLightf (GL_LIGHT2, GL_LINEAR_ATTENUATION   , 0.05f);
+    glLightf (GL_LIGHT2, GL_QUADRATIC_ATTENUATION, 0.01f);
+    glEnable(GL_LIGHT2);
+    /*
+    glLightfv(GL_LIGHT3, GL_AMBIENT , Ia1);
+    glLightfv(GL_LIGHT3, GL_DIFFUSE , IC);
+    glLightfv(GL_LIGHT3, GL_SPECULAR, Is1);
+    glLightf (GL_LIGHT3, GL_CONSTANT_ATTENUATION , 0.90f);
+    glLightf (GL_LIGHT3, GL_LINEAR_ATTENUATION   , 0.05f);
+    glLightf (GL_LIGHT3, GL_QUADRATIC_ATTENUATION, 0.01f);
+    glEnable(GL_LIGHT3);
+    //
+    glLightfv(GL_LIGHT4, GL_AMBIENT , Ia1);
+    glLightfv(GL_LIGHT4, GL_DIFFUSE , IC);
+    glLightfv(GL_LIGHT4, GL_SPECULAR, Is1);
+    glLightf (GL_LIGHT4, GL_CONSTANT_ATTENUATION , 0.90f);
+    glLightf (GL_LIGHT4, GL_LINEAR_ATTENUATION   , 0.05f);
+    glLightf (GL_LIGHT4, GL_QUADRATIC_ATTENUATION, 0.01f);
+    glEnable(GL_LIGHT4);
+    
+    glLightfv(GL_LIGHT5, GL_AMBIENT , Ia1);
+    glLightfv(GL_LIGHT5, GL_DIFFUSE , IC);
+    glLightfv(GL_LIGHT5, GL_SPECULAR, Is1);
+    glLightf (GL_LIGHT5, GL_CONSTANT_ATTENUATION , 0.90f);
+    glLightf (GL_LIGHT5, GL_LINEAR_ATTENUATION   , 0.05f);
+    glLightf (GL_LIGHT5, GL_QUADRATIC_ATTENUATION, 0.01f);
+    glEnable(GL_LIGHT5);
+    
+    glLightfv(GL_LIGHT6, GL_AMBIENT , Ia1);
+    glLightfv(GL_LIGHT6, GL_DIFFUSE , IC);
+    glLightfv(GL_LIGHT6, GL_SPECULAR, Is1);
+    glLightf (GL_LIGHT6, GL_CONSTANT_ATTENUATION , 0.90f);
+    glLightf (GL_LIGHT6, GL_LINEAR_ATTENUATION   , 0.05f);
+    glLightf (GL_LIGHT6, GL_QUADRATIC_ATTENUATION, 0.01f);
+    glEnable(GL_LIGHT6);
+    */
  // Modelo de Sombreado
     glShadeModel(GL_SMOOTH);
     glEnable(GL_NORMALIZE);
@@ -248,23 +288,99 @@ void funDisplay() {
 }
 
 void drawLights1() {
-
-    glLightfv(GL_LIGHT1, GL_DIFFUSE , IC);
-    glEnable(GL_LIGHT1);
+    glRotatef(rotLuzY,0.0f,1.0f,0.0f);
+    glPushMatrix();
+        glLightfv(GL_LIGHT1, GL_DIFFUSE , IC);
+        glEnable(GL_LIGHT1);
+     // Definimos el material de las esferas que representan las luces mediante glColor
+        glEnable(GL_COLOR_MATERIAL);
+        glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+        glPushMatrix();
+            glTranslatef(PL1[0],PL1[1],PL1[2]);
+            glutSolidSphere(0.1,10,10);
+        glPopMatrix();
+        glLightfv(GL_LIGHT1, GL_POSITION, PL1);
+        glDisable(GL_COLOR_MATERIAL);
+    glPopMatrix();
+}
+void drawLights12() {
+    glLightfv(GL_LIGHT2, GL_DIFFUSE , IC);
+    glEnable(GL_LIGHT2);
  // Definimos el material de las esferas que representan las luces mediante glColor
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-    
     glPushMatrix();
-        glTranslatef(PL1[0],PL1[1],PL1[2]);
+        glTranslatef(PL12[0],PL12[1],PL12[2]);
         glutSolidSphere(0.1,10,10);
     glPopMatrix();
-    
-    glLightfv(GL_LIGHT1, GL_POSITION, PL1);
-    
+    glLightfv(GL_LIGHT2, GL_POSITION, PL12);
     glDisable(GL_COLOR_MATERIAL);
 }
-
+void drawLights2() {
+    glLightfv(GL_LIGHT3, GL_DIFFUSE , IC);
+    glEnable(GL_LIGHT3);
+ // Definimos el material de las esferas que representan las luces mediante glColor
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    glPushMatrix();
+        glTranslatef(PL2[0],PL2[1],PL2[2]);
+        glutSolidSphere(0.1,10,10);
+    glPopMatrix();
+    glLightfv(GL_LIGHT3, GL_POSITION, PL2);
+    glDisable(GL_COLOR_MATERIAL);
+}
+void drawLights22() {
+    glLightfv(GL_LIGHT4, GL_DIFFUSE , IC);
+    glEnable(GL_LIGHT4);
+ // Definimos el material de las esferas que representan las luces mediante glColor
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    glPushMatrix();
+        glTranslatef(PL22[0],PL22[1],PL22[2]);
+        glutSolidSphere(0.1,10,10);
+    glPopMatrix();
+    glLightfv(GL_LIGHT4, GL_POSITION, PL22);
+    glDisable(GL_COLOR_MATERIAL);
+}
+void drawLights3() {
+    glLightfv(GL_LIGHT5, GL_DIFFUSE , IC);
+    glEnable(GL_LIGHT5);
+ // Definimos el material de las esferas que representan las luces mediante glColor
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    glPushMatrix();
+        glTranslatef(PL3[0],PL3[1],PL3[2]);
+        glutSolidSphere(0.1,10,10);
+    glPopMatrix();
+    glLightfv(GL_LIGHT5, GL_POSITION, PL3);
+    glDisable(GL_COLOR_MATERIAL);
+}
+void drawLights32() {
+    glLightfv(GL_LIGHT6, GL_DIFFUSE , IC);
+    glEnable(GL_LIGHT6);
+ // Definimos el material de las esferas que representan las luces mediante glColor
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    glPushMatrix();
+        glTranslatef(PL32[0],PL32[1],PL32[2]);
+        glutSolidSphere(0.1,10,10);
+    glPopMatrix();
+    glLightfv(GL_LIGHT6, GL_POSITION, PL32);
+    glDisable(GL_COLOR_MATERIAL);
+}
+void drawLights0() {
+    glLightfv(GL_LIGHT2, GL_DIFFUSE , IC);
+    glEnable(GL_LIGHT2);
+ // Definimos el material de las esferas que representan las luces mediante glColor
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    glPushMatrix();
+        glTranslatef(0.0f,0.0f,11.0f);
+    //glutSolidSphere(0.1,10,10);
+    glPopMatrix();
+    glLightfv(GL_LIGHT2, GL_POSITION, PL0);
+    glDisable(GL_COLOR_MATERIAL);
+}
 void drawRoom() {
     
  // Definimos el material de la habitación
@@ -383,6 +499,7 @@ void keyboard(unsigned char key,int x,int y){
             dibujar[2]=false;
             dibujar[3]=false;
             fin=true;
+            anima=true;
             break;  
         case 'x':
             if(fin){
@@ -544,17 +661,34 @@ void funKeyboard(int key, int x, int y) {
                 x4+=0.5f;
             }
             break;
+        case GLUT_KEY_F1:
+            anima = !anima;
+            break;    
          
     } 
     glutPostRedisplay();    
 }
 
 void funIdle() { 
+    if (anima) {
+        rotLuzY++;
+    } 
+    Sleep(50);
     glutPostRedisplay();  
 }
 
 void practica4(){
-    drawLights1();
+    glPushMatrix();
+        drawLights1();
+        drawLights0();
+    glPopMatrix();
+    /*
+    drawLights12();
+    drawLights2();
+    drawLights22();
+    drawLights3();
+    drawLights32();
+     */
     //drawRoom();
     glRotatef(rotTodoZ, 0.0, 0.0, 1.0);
     glRotatef(rotTodoY, 0.0, 1.0, 0.0);
