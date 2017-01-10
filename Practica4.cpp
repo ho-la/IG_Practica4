@@ -15,6 +15,8 @@ void funKeyboard(int key, int x, int y);
 void destroyFunc();
 void funIdle();
 void keyboard(unsigned char key,int x,int y);
+void moveMouse(int x,int y);
+void raton (int button, int state, int x, int y);
 
 void practica4();
 void drawPieza(int size,char color);
@@ -60,7 +62,7 @@ GLfloat KaT[] = { 0.1, 0.1, 0.1, 1.0 };
 GLfloat KdT[] = { 0.2, 0.2, 0.7, 1.0 };
 GLfloat KsT[] = { 0.9, 0.9, 0.0, 1.0 }; //Brillo Azul
 
-GLfloat zoom = 5.0f;
+GLfloat zoom = 10.0f;
 GLboolean dibujar[]={false,false,false,false};
 GLboolean puesto[]={false,false,false,false};
 GLfloat x1=0.0f,x2=0.0f,x3=0.0f,x4=0.0f;
@@ -77,6 +79,8 @@ GLfloat rot4[]={rx4,ry4,rz4};
 GLboolean anima=false, fin=false;
 GLfloat rotTodoX=0.0f, rotTodoY=0.0f, rotTodoZ=0.0f;
 GLfloat rotLuzY=0.0f;
+GLfloat giroVertical=0.0f;
+int iniX;
 int main(int argc, char** argv) {
     
  // Inicializamos GLUT
@@ -103,7 +107,9 @@ int main(int argc, char** argv) {
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(funKeyboard);
     glutIdleFunc(funIdle); 
-      
+    
+    glutMouseFunc(raton);
+    glutMotionFunc(moveMouse);  
  // Bucle principal
     glutMainLoop();
     
@@ -264,13 +270,15 @@ void funDisplay() {
     glLoadIdentity();
     //glTranslatef(0.0f,0.0f,zoom);
  // Matriz de Vista V (Cámara)
-        GLfloat eye[3]    = {0.0f,  0.0f,  10.0f};
+        GLfloat eye[3]    = {0.0f,  0.0f,  zoom};
         GLfloat center[3] = {0.0f,  0.0f,  0.0f};
         GLfloat up[3]     = {0.0f,  1.0f,  0.0f};
         gluLookAt(    eye[0],    eye[1],    eye[2],
                    center[0], center[1], center[2],
                        up[0],     up[1],     up[2]); 
-        /*
+        
+        glRotatef(giroVertical,1.0f,0.0f,0.0f);
+    /*
         GLfloat eye[3]    = {0.0f,  3.0f,  5.0f};
         GLfloat center[3] = {0.0f,  2.0f, -5.0f};
         GLfloat up[3]     = {0.0f,  1.0f,  0.0f};
@@ -667,6 +675,32 @@ void funKeyboard(int key, int x, int y) {
          
     } 
     glutPostRedisplay();    
+}
+
+void raton (int button, int state, int x, int y){
+    switch(button){
+        case GLUT_LEFT_BUTTON:
+            if(state == GLUT_DOWN)
+                iniX=y;
+                break;
+        //Rueba arriba
+        case 3:
+            if (zoom>=5)
+                zoom-=0.5;
+            break;
+        //Rueda abajo    
+        case 4:
+            if (zoom<=10)
+                zoom+=0.5;
+            break;
+    }  
+    glutPostRedisplay();
+}
+
+void moveMouse(int x,int y){
+    giroVertical = (GLfloat)(y - iniX);
+    //angulo =(GLfloat)  -(y-300)/10;
+    glutPostRedisplay();
 }
 
 void funIdle() { 
